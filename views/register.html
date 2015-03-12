@@ -1,0 +1,38 @@
+<head>
+  <meta charset="UTF-8">
+  <title>Talan Tunisie Chat</title>
+  <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+  <!-- Bootstrap 3.3.2 -->
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+  <!-- Morris chart -->
+  <link href="plugins/morris/morris.css" rel="stylesheet" type="text/css" />
+  <!-- jvectormap -->
+  <link href="plugins/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+  <!-- Daterange picker -->
+  <link href="plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+  <!-- Theme style -->
+  <link href="dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+  <link href="/stylesheets/style.css" rel="stylesheet" type="text/css" />
+
+</head>
+  <body>
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6 col-md-4 col-md-offset-4">
+      <h1 class="text-center login-title">Registration Details
+        <div class="signup-wall">
+          <form action="/signup" method="POST" class="form-signin">
+            <input type="text" name="username" placeholder="Username" required="required" autofocus="autofocus" class="form-control"/>
+            <input type="password" name="password" placeholder="Password" required="required" class="form-control nomargin"/>
+            <input type="email" name="email" placeholder="Email" required="required" class="form-control"/>
+            <input type="text" name="firstName" placeholder="First Name" required="required" class="form-control"/>
+            <input type="text" name="lastName" placeholder="Last Name" required="required" class="form-control"/>
+            <button type="submit" class="btn btn-lg btn-primary btn-block">Register</button><span class="clearfix"></span>
+          </form>
+        </div>
+        <div id="message">
+        </div>
+      </h1>
+    </div>
+  </div>
+</div>
