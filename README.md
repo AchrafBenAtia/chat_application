@@ -9,4 +9,6 @@
 - Ouvrir Console , accéder au repertoire et taper npm install (installer les dépendance).
 
 - Taper npm start et accéder à http://localhost:3000/ . 
+- https://codeship.com/projects/YOUR_PROJECT_UUID/status?branch=master
+
 
