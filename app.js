@@ -5,10 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var User = require('./models/user');
-var User = require('./models/conversation');
-
-
-
 var dbConfig = require('./db');
 var mongoose = require('mongoose');
 
