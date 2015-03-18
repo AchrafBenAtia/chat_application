@@ -1,3 +1,3 @@
 module.exports = {
-  'url' : 'mongodb://localhost:27017/chat'
+  'url' : 'mongodb://achraf:achraf91@ds029541.mongolab.com:29541'
 }
