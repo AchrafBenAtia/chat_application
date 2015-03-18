@@ -25,6 +25,7 @@
     "body-parser": "~1.0.0",
     "bson": "^0.2.19",
     "connect-flash": "*",
+    "ejs": "~0.7.1",
     "cookie-parser": "~1.0.1",
     "debug": "~0.7.4",
     "express": "~4.2.0",
