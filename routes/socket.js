@@ -106,7 +106,7 @@ module.exports = function(server) {
 						'from': socket.user.username,
 						'to' : data.destination,
 						'messagebody': data.message,
-						'created': new Date()
+						'created': new Date().toGMTString()
 					});
 					newConversation.save(function(err) {
 						if (!err) console.log('success!');
