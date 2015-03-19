@@ -1,3 +1,3 @@
 'use strict';
 
-var app = angular.module('chatApp', ['ui.bootstrap']);
+var app = angular.module('chatApp', []);
