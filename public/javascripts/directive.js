@@ -2,7 +2,7 @@
 
 app.directive("box", function($compile) {    
     var directive = {};
-    directive.restrict = 'E'; 
+    directive.restrict = 'AE'; 
     directive.scope = {
          destination:'@destination'
      };

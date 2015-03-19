@@ -33,7 +33,8 @@ module.exports = function(server) {
 		console.info("[DEBUG][io.sockets][connection]");
 
 
-		socket.on("speek:someone", function(data){
+
+		socket.on("speek:someone", function(data) {
 			var query = Conversation.findOne({
 				$and: [{
 					$or: [{
@@ -48,24 +49,26 @@ module.exports = function(server) {
 						'username2': data.to
 					}]
 				}]
-			},
-			{messages:{$slice: -10}});
-			query.sort("-messages.date").exec (function(err, conv) {
+			}, {
+				messages: {
+					$slice: -10
+				}
+			});
+			query.sort("-messages.date").exec(function(err, conv) {
 				if (err) console.log("error");
-				if(conv){
-					console.log(conv.messages);
-					sockets[data.from].emit("load old message",conv.messages);
-					
+				if (conv) {
+					sockets[data.from].emit("load old message", conv.messages);
+
 				}
 
-		});
 			});
-
+		});
 		socket.on('iamhere', function(data) {
 			// This is sent by users when they connect, so we can map them to a user.
 			User.findById(data, function(err, user) {
-/*				console.log("[DEBUG][iamhere] %s -> {%j, %j}", data, err, user);
-*/				if (exist(user.username) == false) {
+				/*				console.log("[DEBUG][iamhere] %s -> {%j, %j}", data, err, user);
+				 */
+				if (exist(user.username) == false) {
 					if (user !== null) {
 						socket.user = user;
 						sockets[socket.user.username] = socket;
@@ -73,9 +76,27 @@ module.exports = function(server) {
 						users_onlines.push(connected_user);
 
 					}
+
+					//send conversation history to user
+					var query = Conversation.find({
+						$or: [{
+							'username1': user.username
+						}, {
+							'username2': user.username
+						}]
+					});
+					query.exec(function(err, convs) {
+						if (err) console.log("error");
+						if (convs) {
+							sockets[user.username].emit("load:ConversationHistory", convs);
+						}
+
+					});
+
 				}
 
 			});
+
 		});
 
 
@@ -104,7 +125,7 @@ module.exports = function(server) {
 					newConversation.username2 = data.destination;
 					newConversation.messages.push({
 						'from': socket.user.username,
-						'to' : data.destination,
+						'to': data.destination,
 						'messagebody': data.message,
 						'created': new Date().toGMTString()
 					});
