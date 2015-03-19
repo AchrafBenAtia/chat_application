@@ -8,4 +8,4 @@
 
 - Ouvrir Console , accéder au repertoire et taper npm install (installer les dépendance).
 
-- Taper npm start et accéder à http://localhost:3000/ . 
+- Taper npm start et accéder à http://localhost:3000/ . !!
