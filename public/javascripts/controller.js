@@ -1,13 +1,12 @@
 'use strict';
 
 app.controller('ChatController', function($scope, $rootScope, $compile, socket) {
-
   var username = document.getElementById('username').value;
   var user_id = document.getElementById('user').value;
   var msgs = [];
   var count = 0;
   $scope.usersOnlines = {};
-  $scope.dests = []; //user destinations array
+  var dests = []; //user destinations array
   $scope.messages = [];
   $scope.conversations = []; //user Conversations array 
   var exist = function(tagname, tab) {
@@ -50,10 +49,10 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
 
   $scope.addbox = function(dest) {
     if (dest !== username) {
-      if (exist(dest, $scope.dests) == false) {
+      if (exist(dest, dests) == false) {
         angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
-        $scope.dests.push(dest);
-            $scope.notif = 0 ;
+        dests.push(dest);
+        $scope.notif = 0;
 
       }
     }
@@ -61,6 +60,16 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
   $scope.notification = function() {
 
     $scope.notif = 0;
+  }
+
+  $scope.getchat = function(dest) {
+     if (exist(dest, dests) == false) {
+        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
+        dests.push(dest);
+        $scope.notif = 0;
+
+      }
+
   }
 
   //tell socket.io that y're connected 
@@ -90,8 +99,6 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
       $scope.conversations.push(conversation);
 
     }
-
-
   });
 
   //get messages from other users
