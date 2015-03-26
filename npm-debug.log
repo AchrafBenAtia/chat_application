@@ -11,7 +11,7 @@
 8 verbose unsafe-perm in lifecycle true
 9 info chat_application@0.0.1 Failed to exec start script
 10 verbose stack Error: chat_application@0.0.1 start: `node ./bin/www`
-10 verbose stack Exit status 3221225786
+10 verbose stack Exit status 1
 10 verbose stack     at EventEmitter.<anonymous> (C:\Program Files\nodejs\node_modules\npm\lib\utils\lifecycle.js:213:16)
 10 verbose stack     at EventEmitter.emit (events.js:110:17)
 10 verbose stack     at ChildProcess.<anonymous> (C:\Program Files\nodejs\node_modules\npm\lib\utils\spawn.js:14:12)
@@ -26,7 +26,7 @@
 16 error npm  v2.5.1
 17 error code ELIFECYCLE
 18 error chat_application@0.0.1 start: `node ./bin/www`
-18 error Exit status 3221225786
+18 error Exit status 1
 19 error Failed at the chat_application@0.0.1 start script 'node ./bin/www'.
 19 error This is most likely a problem with the chat_application package,
 19 error not with npm itself.

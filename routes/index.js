@@ -51,6 +51,7 @@ module.exports = function(passport){
 	router.get('/*', function(req, res) {
 		res.redirect('/home');
 	});
+
 	
 
 	return router;

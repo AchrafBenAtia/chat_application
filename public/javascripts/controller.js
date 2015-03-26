@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ChatController', function($scope, $rootScope, $compile, socket) {
+app.controller('ChatController', function($timeout, $scope, $rootScope, $compile, socket) {
   var username = document.getElementById('username').value;
   var user_id = document.getElementById('user').value;
   var msgs = [];
@@ -19,7 +19,14 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
 
     return false;
   };
-  //load old conversation on click !!!
+  $scope.closeChatBox = true;
+  //close Chat Box 
+  $scope.closeChatPanel = function(dest) {
+      console.log(dests.length);
+      dests.splice(dests.indexOf(dest), 1);
+      $scope.closeChatBox = false;
+    }
+    //load old conversation on click !!!
   $scope.load = function(dest) {
     if (count == 0) {
       socket.emit("speek:someone", {
@@ -41,6 +48,12 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
 
         }
         $scope.messages = msgs;
+        var wrapper = document.getElementsByClassName('direct-chat-messages')[0],
+          scrollRemaining = wrapper.scrollHeight - wrapper.scrollTop;
+        $timeout(function() {
+          wrapper.scrollTop = wrapper.scrollHeight - scrollRemaining;
+        }, 0);
+
 
       });
       count++;
@@ -50,25 +63,27 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
   $scope.addbox = function(dest) {
     if (dest !== username) {
       if (exist(dest, dests) == false) {
-        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
         dests.push(dest);
+        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
         $scope.notif = 0;
 
       }
     }
   }
+
+
   $scope.notification = function() {
 
     $scope.notif = 0;
   }
 
   $scope.getchat = function(dest) {
-     if (exist(dest, dests) == false) {
-        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
-        dests.push(dest);
-        $scope.notif = 0;
+    if (exist(dest, dests) == false) {
+      angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
+      dests.push(dest);
+      $scope.notif = 0;
 
-      }
+    }
 
   }
 
@@ -105,6 +120,11 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
   socket.on('send:message', function(message) {
     $scope.messages.push(message);
     $scope.notif = $scope.notif + 1;
+    var wrapper = document.getElementsByClassName('direct-chat-messages')[0],
+      scrollRemaining = wrapper.scrollHeight - wrapper.scrollTop;
+    $timeout(function() {
+      wrapper.scrollTop = wrapper.scrollHeight - scrollRemaining;
+    }, 0);
   });
 
   //send messages to other users 
@@ -112,7 +132,6 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
     socket.emit('send:message', {
       message: $scope.message,
       destination: $scope.destination
-
     });
 
     $scope.messages.push({
@@ -121,6 +140,11 @@ app.controller('ChatController', function($scope, $rootScope, $compile, socket) 
       date: new Date().toGMTString()
     });
     $scope.message = '';
+    var wrapper = document.getElementsByClassName('direct-chat-messages')[0],
+      scrollRemaining = wrapper.scrollHeight - wrapper.scrollTop;
+    $timeout(function() {
+      wrapper.scrollTop = wrapper.scrollHeight - scrollRemaining;
+    }, 0);
   }
 
 
