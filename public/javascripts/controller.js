@@ -9,6 +9,7 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $compile
   var dests = []; //user destinations array
   $scope.messages = [];
   $scope.conversations = []; //user Conversations array 
+
   var exist = function(tagname, tab) {
     var i = null;
     for (i = 0; tab.length > i; i += 1) {
@@ -22,9 +23,13 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $compile
   $scope.closeChatBox = true;
   //close Chat Box 
   $scope.closeChatPanel = function(dest) {
-      console.log(dests.length);
-      dests.splice(dests.indexOf(dest), 1);
-      $scope.closeChatBox = false;
+    console.log(dests.length);
+    dests.splice(dests.indexOf(dest), 1);
+    $scope.closeChatBox = false;
+  }
+  $scope.getConversationMessages = function(conversation) {
+
+      $scope.ConversationMsgs = conversation.msgs;
     }
     //load old conversation on click !!!
   $scope.load = function(dest) {
@@ -92,7 +97,6 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $compile
 
   //get online users List
   socket.on('whoshere', function(data) {
-
     $scope.usersOnlines = data.users;
   });
 

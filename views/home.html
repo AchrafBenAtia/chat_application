@@ -323,6 +323,7 @@
                   </div><!-- /.box-header -->
                   <div class="box-body ">
                     <div class="row">
+                      <!-- Conversation box -->
                       <div class="col-md-5">
                         <div class="box">
                           <div class="box-header with-border">
@@ -335,11 +336,10 @@
                             </div><!-- /.box-tools -->
                           </div><!-- /.box-header -->
                           <div class="box-body no-padding">
-
                             <div class="table-responsive mailbox-messages">
                               <table class="table table-hover table-striped">
                                 <tbody>
-                                  <tr ng-repeat="conversation in conversations">
+                                  <tr ng-repeat="conversation in conversations" ng-click="getConversationMessages(conversation)">
                                     <td>
                                       <div class="user-panel" >
                                         <div class="pull-left image">
@@ -347,100 +347,85 @@
                                         </div>
                                       </div>
                                     </td>
-                                    
                                     <td class="mailbox-subject"><b>{{conversation.intervenant}}</b><br/><small>{{conversation.msgs[conversation.msgs.length-1].messagebody}}</small></td>
                                     <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
                                     <td class="mailbox-date">
                                       <i class="fa fa-clock-o"></i>&nbsp;&nbsp;{{conversation.msgs[conversation.msgs.length-1].date |  moment: 'fromNow' }}
-                                     
                                     </td>
                                   </tr>
-
-
                                 </tbody>
                               </table><!-- /.table -->
                             </div><!-- /.mail-box-messages -->
                           </div><!-- /.box-body -->
                           <div class="box-footer no-padding">
-
                           </div>
                         </div><!-- /. box -->
                       </div>
+                      <!-- /.Conversation box -->
+                      <!-- Inbox -->
                       <div class="col-md-7">
                         <div class="box">
-                          <div class="box-header with-border">
+                          <div class="box-header">
+                            <i class="fa fa-comments-o"></i>
                             <h3 class="box-title">Inbox</h3>
-                            <div class="box-tools pull-right">
-                              <div class="has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Search Mail"/>
-                                <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                          </div>
+                          <div class="box-body chat" id="chat-box">
+                            <!-- chat item -->
+                          <!--   <div class="item" ng-repeat="ConversationMsg in ConversationMsgs">
+                              <img src="dist/img/avatar5.png" alt="user image"/>
+                              <p class="message">
+                                <a href="#" class="name">
+                                  <small class="text-muted pull-right"><i class="fa fa-clock-o"></i> {{ConversationMsg.date | moment: 'format': 'MMM DD, YYYY, h:mm' }}</small>
+                                 {{ConversationMsg.from}}
+                                </a>
+                                {{ConversationMsg.messagebody}}
+                              </p>
+                              <div class="attachment">
+                                <h4>Attachments:</h4>
+                                <p class="filename">
+                                  Theme-thumbnail-image.jpg
+                                </p>
+                                <div class="pull-right">
+                                  <button class="btn btn-primary btn-sm btn-flat">Open</button>
+                                </div>
+                              </div> 
+                            </div> --> 
+                        <!-- Message. Default to the left -->
+                        <div ng-repeat="ConversationMsg in ConversationMsgs" ng-switch on="ConversationMsg.from" class="repeat-item direct-chat-primary">
+                          <div class="direct-chat-msg" ng-switch-when= <%=user.username%> >
+                            <div class='direct-chat-info clearfix'>
+                              <span class='direct-chat-name pull-left'>{{ConversationMsg.from}}</span>
+                              <span class='direct-chat-timestamp pull-right'>{{ConversationMsg.date | moment: 'format': 'MMM DD, YYYY, h:mm'}}</span>
+                            </div><!-- /.direct-chat-info -->
+                            <img class="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="message user image" /><!-- /.direct-chat-img -->
+                            <div class="direct-chat-text">
+                              <p ng-bind-html="ConversationMsg.messagebody | unsafe">{{ConversationMsg.messagebody}}</p>
+                            </div><!-- /.direct-chat-text -->
+                          </div><!-- /.direct-chat-msg -->
+                          <!-- Message to the right -->
+                          <div class="direct-chat-msg right"  ng-switch-default>
+                            <div class='direct-chat-info clearfix'>
+                              <span class='direct-chat-name pull-right'>{{ConversationMsg.from}}</span>
+                              <span class='direct-chat-timestamp pull-left'>{{ConversationMsg.date | moment: 'format': 'MMM DD, YYYY, h:mm'}}</span>
+                            </div><!-- /.direct-chat-info -->
+                            <img class="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="message user image" /><!-- /.direct-chat-img -->
+                            <div class="direct-chat-text">
+                              <p ng-bind-html="ConversationMsg.messagebody | unsafe">{{ConversationMsg.messagebody}}</p>
+                            </div><!-- /.direct-chat-text -->
+                          </div><!-- /.direct-chat-msg -->
+                        </div>
+                            
+                          </div><!-- /.chat -->
+                          <div class="box-footer">
+                            <div class="input-group">
+                              <input class="form-control" placeholder="Type message..."/>
+                              <div class="input-group-btn">
+                                <button class="btn btn-success"><i class="fa fa-plus"></i></button>
                               </div>
-                            </div><!-- /.box-tools -->
-                          </div><!-- /.box-header -->
-                          <div class="box-body no-padding">
-                            <div class="mailbox-controls">
-                              <!-- Check all button -->
-                              <button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
-                              <div class="btn-group">
-                                <button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                                <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
-                                <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
-                              </div><!-- /.btn-group -->
-                              <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                              <div class="pull-right">
-                                1-50/200
-                                <div class="btn-group">
-                                  <button class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                                  <button class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                                </div><!-- /.btn-group -->
-                              </div><!-- /.pull-right -->
-                            </div>
-                            <div class="table-responsive mailbox-messages">
-                              <table class="table table-hover table-striped">
-                                <tbody>
-                                  <tr>
-                                    <td><input type="checkbox" /></td>
-                                    <td class="mailbox-star"><a href="#"><i class="fa fa-star text-yellow"></i></a></td>
-                                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...</td>
-                                    <td class="mailbox-attachment"></td>
-                                    <td class="mailbox-date">5 mins ago</td>
-                                  </tr>
-                                  <tr>
-                                    <td><input type="checkbox" /></td>
-                                    <td class="mailbox-star"><a href="#"><i class="fa fa-star-o text-yellow"></i></a></td>
-                                    <td class="mailbox-name"><a href="read-mail.html">Alexander Pierce</a></td>
-                                    <td class="mailbox-subject"><b>AdminLTE 2.0 Issue</b> - Trying to find a solution to this problem...</td>
-                                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
-                                    <td class="mailbox-date">28 mins ago</td>
-                                  </tr>
-
-                                </tbody>
-                              </table><!-- /.table -->
-                            </div><!-- /.mail-box-messages -->
-                          </div><!-- /.box-body -->
-                          <div class="box-footer no-padding">
-                            <div class="mailbox-controls">
-                              <!-- Check all button -->
-                              <button class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i></button>
-                              <div class="btn-group">
-                                <button class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
-                                <button class="btn btn-default btn-sm"><i class="fa fa-reply"></i></button>
-                                <button class="btn btn-default btn-sm"><i class="fa fa-share"></i></button>
-                              </div><!-- /.btn-group -->
-                              <button class="btn btn-default btn-sm"><i class="fa fa-refresh"></i></button>
-                              <div class="pull-right">
-                                1-50/200
-                                <div class="btn-group">
-                                  <button class="btn btn-default btn-sm"><i class="fa fa-chevron-left"></i></button>
-                                  <button class="btn btn-default btn-sm"><i class="fa fa-chevron-right"></i></button>
-                                </div><!-- /.btn-group -->
-                              </div><!-- /.pull-right -->
                             </div>
                           </div>
-                        </div><!-- /. box -->
-                      </div><!-- /.col -->
-
+                        </div><!-- /.box (chat box) -->
+                      </div><!-- /.col --><!-- /.Inbox -->
                     </div><!-- /.row -->
                   </div><!-- ./box-body -->
                   <div class="box-footer">
