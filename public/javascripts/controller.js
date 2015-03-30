@@ -1,14 +1,28 @@
 'use strict';
 
-app.controller('ChatController', function($timeout, $scope, $rootScope, $compile, socket) {
+app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q, $compile, socket) {
   var username = document.getElementById('username').value;
   var user_id = document.getElementById('user').value;
   var msgs = [];
   var count = 0;
-  $scope.usersOnlines = {};
-  var dests = []; //user destinations array
+  $scope.usersOnlines = [];
+  $scope.dests = []; //user destinations array
   $scope.messages = [];
   $scope.conversations = []; //user Conversations array 
+  $scope.users = [];
+
+  
+
+  socket.on('AllUser', function(data) {
+     for (var i = 0; i < data.length; i++) {
+       $scope.users.push(data[i]);
+     };
+});
+
+
+
+
+
 
   var exist = function(tagname, tab) {
     var i = null;
@@ -23,13 +37,24 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $compile
   $scope.closeChatBox = true;
   //close Chat Box 
   $scope.closeChatPanel = function(dest) {
-    console.log(dests.length);
-    dests.splice(dests.indexOf(dest), 1);
+    console.log($scope.dests.length);
+    $scope.dests.splice($scope.dests.indexOf(dest), 1);
     $scope.closeChatBox = false;
   }
-  $scope.getConversationMessages = function(conversation) {
+    $scope.updateSelectedUser = function(a) {
+      $scope.destination = a;
+  }
 
+
+  $scope.getConversationMessages = function(conversation) {
+      $scope.intervenant = conversation.intervenant;
       $scope.ConversationMsgs = conversation.msgs;
+      var wrapper = document.getElementById('chat-box'),
+        scrollRemaining = wrapper.scrollHeight - wrapper.scrollTop;
+      $timeout(function() {
+        wrapper.scrollTop = wrapper.scrollHeight - scrollRemaining;
+      }, 0);
+
     }
     //load old conversation on click !!!
   $scope.load = function(dest) {
@@ -67,9 +92,9 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $compile
 
   $scope.addbox = function(dest) {
     if (dest !== username) {
-      if (exist(dest, dests) == false) {
-        dests.push(dest);
-        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
+      if (exist(dest, $scope.dests) == false) {
+        $scope.dests.push(dest);
+        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " users="+$scope.users+"></box>")($scope));
         $scope.notif = 0;
 
       }
@@ -83,14 +108,23 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $compile
   }
 
   $scope.getchat = function(dest) {
-    if (exist(dest, dests) == false) {
-      angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " ></box>")($rootScope));
-      dests.push(dest);
+    if (exist(dest, $scope.dests) == false) {
+      angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " users="+$scope.users+"></box>")($scope));
+      $scope.dests.push(dest);
       $scope.notif = 0;
 
     }
 
   }
+
+  $scope.OpenEmptyBox = function() {
+
+    angular.element(document.getElementById('chat_box_content')).append($compile("<box users="+$scope.users+"></box>")($scope));
+
+  }
+
+
+  //sockets communication
 
   //tell socket.io that y're connected 
   socket.emit('iamhere', user_id);

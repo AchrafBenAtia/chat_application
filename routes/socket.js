@@ -32,7 +32,10 @@ module.exports = function(server) {
 
 		console.info("[DEBUG][io.sockets][connection]");
 
+		
+				
 
+		
 
 		socket.on("speek:someone", function(data) {
 			var query = Conversation.findOne({
@@ -96,6 +99,15 @@ module.exports = function(server) {
 				}
 
 			});
+			User.find(function(err, users) {
+			var alluser = []
+			for (var i = 0; i < users.length; i++) {
+				alluser.push(users[i].username)
+			};
+			
+			socket.emit("AllUser", alluser);
+	     });
+
 
 		});
 

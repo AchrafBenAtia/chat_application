@@ -1,6 +1,40 @@
-extends layout
+ <div class="col-md-5">
+                        <div class="box box-primary">
+                          <div class="box-header with-border">
+                            <h3 class="box-title">Conversations</h3>
+                            <div class="box-tools pull-right">
+                              <div class="has-feedback">
+                                <input type="text" class="form-control input-sm" placeholder="Search Conversation"/>
+                                <span class="glyphicon glyphicon-search form-control-feedback"></span>
+                              </div>
+                            </div><!-- /.box-tools -->
+                          </div><!-- /.box-header -->
+                          <div class="box-body no-padding">
+                            <div class="table-responsive mailbox-messages">
+                              <table class="table table-hover table-striped">
+                                <tbody>
+                                  <tr ng-repeat="conversation in conversations" ng-click="getConversationMessages(conversation)" >
+                                    <td>
+                                      <div class="user-panel" >
+                                        <div class="pull-left image">
+                                          <img src="dist/img/avatar5.png" class="img-rounded" alt="User Image" />
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td class="mailbox-subject"><b>{{conversation.intervenant}}</b><br/><small>{{conversation.msgs[conversation.msgs.length-1].messagebody}}</small></td>
+                                    <td class="mailbox-attachment"><i class="fa fa-paperclip"></i></td>
+                                    <td class="mailbox-date">
+                                      <i class="fa fa-clock-o"></i>&nbsp;&nbsp;{{conversation.msgs[conversation.msgs.length-1].date |  moment: 'fromNow' }}
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table><!-- /.table -->
+                            </div><!-- /.mail-box-messages -->
+                          </div><!-- /.box-body -->
+                          <div class="box-footer no-padding">
+                          </div>
+                        </div><!-- /. box -->
+                      </div>
 
-block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+
+                      

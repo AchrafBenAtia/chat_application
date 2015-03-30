@@ -1,14 +1,29 @@
 'use strict';
 
 app.directive("box", function($compile) {    
-    var directive = {};
-    directive.restrict = 'AE'; 
-    directive.scope = {
-         destination:'@destination'
-     };
-    directive.templateUrl = 'box.html';
-    return directive;
+    return{
+    restrict :'AE', 
+    scope : {destination:'@destination',
+			 users:'@users'},
+
+    templateUrl : 'box.html'
+    
+};
+})
+
+app.directive('autoComplete', function($timeout) {
+    return function(scope, iElement, iAttrs) {
+            iElement.autocomplete({
+                source: scope[iAttrs.uiItems],
+                select: function() {
+                    $timeout(function() {
+                      iElement.trigger('input');
+                    }, 0);
+                }
+            });
+    };
 });
+
 
 
 
