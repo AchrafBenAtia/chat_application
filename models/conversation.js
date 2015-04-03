@@ -3,6 +3,8 @@ var mongoose = require('mongoose');
 var message = mongoose.Schema({
     from     : String
   , to       : String
+  , type     : String
+  , file     : Object
   , messagebody     : String
   , date     : {type: Date, default: Date.now}
 });

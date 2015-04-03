@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q, $compile, socket) {
+app.controller('ChatController', function($timeout, $scope, $upload, $compile, socket) {
   var username = document.getElementById('username').value;
   var user_id = document.getElementById('user').value;
   var msgs = [];
@@ -11,18 +11,59 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
   $scope.conversations = []; //user Conversations array 
   $scope.users = [];
 
-  
+  $scope.sendFile = function(file) {
+    console.log($scope.files);
+
+    $scope.percent = 0;
+
+  }
+  $scope.cancelSendFile = function() {
+    $scope.percent = 0;
+  }
+
+  $scope.onFileSelect = function($files) {
+    //$files: an array of files selected, each file has name, size, and type. 
+    for (var i = 0; i < $files.length; i++) {
+      var file = $files[i];
+      $scope.upload = $upload.upload({
+        url: '/file-upload',
+        data: $scope.destination,
+        method: 'POST',
+        file: file,
+      }).progress(function(evt) {
+        $scope.percent = parseInt(100.0 * evt.loaded / evt.total);
+      }).success(function(data, status, headers, config) {
+        $scope.sendFile = function(file) {
+
+          $scope.percent = 0;
+          socket.emit("send:file", {
+            file: data,
+            destination: $scope.destination
+          });
+          $scope.messages.push({
+            user: username,
+            type: "file",
+            file: data,
+            date: new Date().toGMTString()
+          });
+          var wrapper = document.getElementsByClassName('direct-chat-messages')[0],
+            scrollRemaining = wrapper.scrollHeight - wrapper.scrollTop;
+          $timeout(function() {
+            wrapper.scrollTop = wrapper.scrollHeight - scrollRemaining;
+          }, 0);
+
+
+        }
+      });
+
+    }
+  };
 
   socket.on('AllUser', function(data) {
-     for (var i = 0; i < data.length; i++) {
-       $scope.users.push(data[i]);
-     };
-});
-
-
-
-
-
+    for (var i = 0; i < data.length; i++) {
+      $scope.users.push(data[i]);
+    };
+  });
 
   var exist = function(tagname, tab) {
     var i = null;
@@ -41,8 +82,10 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
     $scope.dests.splice($scope.dests.indexOf(dest), 1);
     $scope.closeChatBox = false;
   }
-    $scope.updateSelectedUser = function(a) {
-      $scope.destination = a;
+
+  $scope.updateSelectedUser = function(user) {
+
+    $scope.destination = user;
   }
 
 
@@ -67,11 +110,14 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
       socket.on("load old message", function(data) {
 
         for (var i = 0; i <= data.length - 1; i++) {
+          console.log(data[i].type);
           var message = {
             user: data[i].from,
+            type: data[i].type,
             destination: data[i].to,
             date: new Date(data[i].date).toGMTString(),
-            text: data[i].messagebody
+            text: data[i].messagebody,
+            file: data[i].file
           }
 
           msgs.push(message);
@@ -94,7 +140,7 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
     if (dest !== username) {
       if (exist(dest, $scope.dests) == false) {
         $scope.dests.push(dest);
-        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " users="+$scope.users+"></box>")($scope));
+        angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " users=" + $scope.users + "></box>")($scope));
         $scope.notif = 0;
 
       }
@@ -109,7 +155,7 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
 
   $scope.getchat = function(dest) {
     if (exist(dest, $scope.dests) == false) {
-      angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " users="+$scope.users+"></box>")($scope));
+      angular.element(document.getElementById('chat_box_content')).append($compile("<box destination=" + dest + " users=" + $scope.users + "></box>")($scope));
       $scope.dests.push(dest);
       $scope.notif = 0;
 
@@ -119,10 +165,9 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
 
   $scope.OpenEmptyBox = function() {
 
-    angular.element(document.getElementById('chat_box_content')).append($compile("<box users="+$scope.users+"></box>")($scope));
+    angular.element(document.getElementById('chat_box_content')).append($compile("<box users=" + $scope.users + "></box>")($scope));
 
   }
-
 
   //sockets communication
 
@@ -132,6 +177,7 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
   //get online users List
   socket.on('whoshere', function(data) {
     $scope.usersOnlines = data.users;
+
   });
 
   //get conversations history
@@ -165,6 +211,16 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
     }, 0);
   });
 
+  socket.on('send:file', function(message) {
+    $scope.messages.push(message);
+    $scope.notif = $scope.notif + 1;
+    var wrapper = document.getElementsByClassName('direct-chat-messages')[0],
+      scrollRemaining = wrapper.scrollHeight - wrapper.scrollTop;
+    $timeout(function() {
+      wrapper.scrollTop = wrapper.scrollHeight - scrollRemaining;
+    }, 0);
+  });
+
   //send messages to other users 
   $scope.sendMessage = function() {
     socket.emit('send:message', {
@@ -174,6 +230,7 @@ app.controller('ChatController', function($timeout, $scope, $rootScope, $sce, $q
 
     $scope.messages.push({
       user: username,
+      type: "text",
       text: $scope.message,
       date: new Date().toGMTString()
     });

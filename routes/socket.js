@@ -1,6 +1,9 @@
 module.exports = function(server) {
 
-	var io = require('socket.io')(server);
+	var io = require('socket.io')(server),
+		dl = require('delivery'),
+		fs = require('fs');
+
 	var User = require('../models/user');
 	var Conversation = require('../models/conversation');
 
@@ -20,6 +23,7 @@ module.exports = function(server) {
 	};
 
 	io.sockets.on('connection', function(socket) {
+		var delivery = dl.listen(socket);
 		var connected_user = {};
 
 		// send updates with online users
@@ -31,12 +35,6 @@ module.exports = function(server) {
 		}, 3000);
 
 		console.info("[DEBUG][io.sockets][connection]");
-
-		
-				
-
-		
-
 		socket.on("speek:someone", function(data) {
 			var query = Conversation.findOne({
 				$and: [{
@@ -100,13 +98,13 @@ module.exports = function(server) {
 
 			});
 			User.find(function(err, users) {
-			var alluser = []
-			for (var i = 0; i < users.length; i++) {
-				alluser.push(users[i].username)
-			};
-			
-			socket.emit("AllUser", alluser);
-	     });
+				var alluser = []
+				for (var i = 0; i < users.length; i++) {
+					alluser.push(users[i].username)
+				};
+
+				socket.emit("AllUser", alluser);
+			});
 
 
 		});
@@ -138,6 +136,7 @@ module.exports = function(server) {
 					newConversation.messages.push({
 						'from': socket.user.username,
 						'to': data.destination,
+						'type': "text",
 						'messagebody': data.message,
 						'created': new Date().toGMTString()
 					});
@@ -149,6 +148,7 @@ module.exports = function(server) {
 					conv.messages.push({
 						'from': socket.user.username,
 						'to': data.destination,
+						'type': "text",
 						'messagebody': data.message,
 						'created': new Date()
 					});
@@ -160,6 +160,7 @@ module.exports = function(server) {
 
 			});
 			sockets[data.destination].emit('send:message', {
+				type: "text",
 				user: socket.user.username,
 				destination: data.destination,
 				date: new Date().toGMTString(),
@@ -167,7 +168,64 @@ module.exports = function(server) {
 			});
 
 		});
+			
+		socket.on("send:file", function(data){
+			Conversation.findOne({
+				$and: [{
+					$or: [{
+						'username1': socket.user.username
+					}, {
+						'username1': data.destination
+					}]
+				}, {
+					$or: [{
+						'username2': socket.user.username
+					}, {
+						'username2': data.destination
+					}]
+				}]
+			}, function(err, conv) {
+				if (err) console.log("error");
+				if (conv == null) {
+					var newConversation = new Conversation();
+					newConversation.username1 = socket.user.username;
+					newConversation.username2 = data.destination;
+					newConversation.messages.push({
+						'from': socket.user.username,
+						'to': data.destination,
+						'type' : "file",
+						'file': data.file,						
+						'created': new Date().toGMTString()
+					});
+					newConversation.save(function(err) {
+						if (!err) console.log('success!');
+					});
 
+				} else {
+					conv.messages.push({
+						'from': socket.user.username,
+						'to': data.destination,
+						'type' : "file",
+						'file': data.file,						
+						'created': new Date().toGMTString()
+					});
+					conv.save(function(err) {
+						if (!err) console.log('successAddFile!');
+					});
+				}
+
+
+			});
+			sockets[data.destination].emit('send:file', {
+				type: "file",
+				user: socket.user.username,
+				destination: data.destination,
+				date: new Date().toGMTString(),
+				file: data.file
+			});
+
+
+		});
 		socket.on('disconnect', function(data) {
 			if (!socket.user) return;
 			while (users_onlines.indexOf(socket.user) !== -1) {
