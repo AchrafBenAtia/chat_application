@@ -1,7 +1,6 @@
 module.exports = function(server) {
 
 	var io = require('socket.io')(server),
-		dl = require('delivery'),
 		fs = require('fs');
 
 	var User = require('../models/user');
@@ -23,7 +22,6 @@ module.exports = function(server) {
 	};
 
 	io.sockets.on('connection', function(socket) {
-		var delivery = dl.listen(socket);
 		var connected_user = {};
 
 		// send updates with online users
