@@ -3,5 +3,7 @@
 var app = angular.module('chatApp', ['ngAnimate',
 									'angular-momentjs',
 									'ui.bootstrap',
-									'angularFileUpload'])
+									'angularFileUpload',
+									'ui.bootstrap.typeahead',
+									'decipher.tags'])
  

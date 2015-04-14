@@ -4,7 +4,8 @@ app.directive("box", function($compile) {
     return{
     restrict :'AE', 
     scope : {destination:'@destination',
-			 users:'@users'},
+			 users:'@users',
+             group:'@group'},
 
     templateUrl : 'box.html'
     

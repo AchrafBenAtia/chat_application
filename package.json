@@ -23,6 +23,7 @@
   "dependencies": {
     "bcrypt-nodejs": "*",
     "body-parser": "~1.0.0",
+    "bower": "^1.4.1",
     "bson": "^0.2.19",
     "connect-flash": "*",
     "cookie-parser": "~1.0.1",

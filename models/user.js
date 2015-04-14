@@ -1,9 +1,17 @@
 var mongoose = require('mongoose');
- 
-module.exports = mongoose.model('User',{
-	username: String,
-	password: String,
-	email: String,
-	firstName: String,
-	lastName: String
+var Group = require('../models/group');
+
+
+var user = mongoose.Schema({
+    username    : String
+  , password    : String
+  , email     : String
+  , firstName: String
+  , lastName: String
+  , groupes:[{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Group'
+	}]
 });
+
+module.exports = mongoose.model('User', user);
